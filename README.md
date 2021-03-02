@@ -10,12 +10,19 @@ Currently contains code to blink the led every one second
 python3 -m pip install pyserial
 ```   
 
-2. picocom   
-Linux   
+2. picocom     
+
+Linux:   
 ```
 sudo apt-get install picocom
 ```   
 
+Mac: (with homebrew)   
+```
+arch x86_64 brew install picocom
+```    
+
+   
 ### Run
 
 Make sure your esp32 is connected   
