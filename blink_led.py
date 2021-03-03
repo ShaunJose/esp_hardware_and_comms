@@ -3,7 +3,7 @@ print('blink_led.py is loaded!')
 import time
 from machine import Pin
 
-led_pin = 0
+led_pin = 2
 
 def run(pin=led_pin):
 
