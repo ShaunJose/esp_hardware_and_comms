@@ -48,6 +48,7 @@ includes = []
 includes.append('boot.py')
 includes.append('main.py')
 includes.append('blink_led.py')
+includes.append('comms.py')
 
 # The following variable reduces upload size.
 # If True, this removes blank lines, comments, and right-side whitespace.
@@ -134,8 +135,6 @@ class uploader:
 
         # notify
         print()
-        print('REPL-Ace Uploader - Copyright (c) 2017 Clayton Darwin')
-        print('ClaytonDarwin.com - claytondarwin@gmail.com')
         print('Port: {} Speed: {} Timeout: {}'.format(self.port,self.baudrate,self.timeout))
         print('System Root: {}'.format(self.file_system_dir))
         print('Exclude: {}'.format(list(self.excludes)))
