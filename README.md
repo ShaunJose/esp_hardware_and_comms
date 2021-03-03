@@ -22,6 +22,10 @@ Mac: (with homebrew)
 arch x86_64 brew install picocom
 ```    
 
+3. urequests
+```
+python3 -m pip install urequests
+```
    
 ### Run
 
