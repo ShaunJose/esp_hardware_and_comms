@@ -6,9 +6,8 @@ from machine import Pin
 
 def run():
 
-    led_pin = 2
-    pir_pin = 0
-    power_pin = 5
+    led_pin = 33
+    pir_pin = 25
     curr_state = 0
 
     time.sleep(4) # Wait so program doesnt complain that vars arent declared
@@ -16,20 +15,20 @@ def run():
     # Define pins and set init values
     led = Pin(led_pin, Pin.OUT)
     pir = Pin(pir_pin, Pin.IN)
-    power = Pin(power_pin)
     led.off()
     pir.off()
-    power.value(1)
 
     time.sleep(4) # Wait so program doesnt complain that pins arent set
 
+    time.sleep(60)
+
     while True:
-        if pir.value() == 1 and curr_state == 0:
-            print("Motion detected!")
-            led.on()
-            curr_state = 1
-        if pir.value() == 0 and curr_state == 1:
+        if curr_state == 1 and pir.value() == 0:
             print("Motion stopped!")
             led.off()
             curr_state = 0
             time.sleep(5)
+        if curr_state == 0 and pir.value() == 1:
+            print("Motion detected!")
+            led.on()
+            curr_state = 1
