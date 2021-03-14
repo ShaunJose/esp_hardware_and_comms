@@ -38,6 +38,7 @@ excludes = ['REPLace.py',
             'archive',
             'video',
             'thumbs',
+            '.git'
             ]
 
 # FOR FILES: This is the opposite of excludes. If you list basenames here, then only
@@ -46,7 +47,6 @@ excludes = ['REPLace.py',
 
 includes = []
 includes.append('boot.py')
-includes.append('main.py')
 includes.append('blink_led.py')
 includes.append('comms.py')
 
