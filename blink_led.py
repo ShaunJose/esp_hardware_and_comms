@@ -22,7 +22,10 @@ def run():
             print("Motion detected!")
             led.on()
             curr_state = 1
+            pir.value(0) # Now ignore motion from the same person
         if curr_state == 1 and pir.value() == 0:
-            print("Motion stopped!")
+            print("Motion sensor sleeping")
             led.off()
             curr_state = 0
+            time.sleep(15) # Ignore any motion for a few seconds - it's probably from the same person!
+            print("Ready for next motion!")
