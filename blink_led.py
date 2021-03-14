@@ -22,6 +22,7 @@ def run():
             print("Motion detected!")
             led.on()
             curr_state = 1
+            #TODO: Capture snapshot of person here
             pir.value(0) # Now ignore motion from the same person
         if curr_state == 1 and pir.value() == 0:
             print("Motion sensor sleeping")
