@@ -21,7 +21,7 @@
 
 # Now just set the port:
 
-port = '/dev/cu.usbserial-110'
+port = '/dev/cu.usbserial-130'
 
 # Given a local folder using the variable file_system_dir,
 # this overwrites the folder content to the flash of the MicroPython instance.
@@ -38,6 +38,7 @@ excludes = ['REPLace.py',
             'archive',
             'video',
             'thumbs',
+            '.git'
             ]
 
 # FOR FILES: This is the opposite of excludes. If you list basenames here, then only
@@ -46,7 +47,6 @@ excludes = ['REPLace.py',
 
 includes = []
 includes.append('boot.py')
-includes.append('main.py')
 includes.append('blink_led.py')
 includes.append('comms.py')
 
@@ -110,7 +110,7 @@ class uploader:
         # port
         self.port = port
         if not self.port:
-            self.port = '/dev/cu.usbserial-110'
+            self.port = '/dev/cu.usbserial-130'
 
         # local file system dir
         self.file_system_dir = file_system_dir
