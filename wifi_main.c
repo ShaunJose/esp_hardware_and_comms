@@ -49,6 +49,10 @@ static const char *HTTP_TAG = "http";
    to the AP with an IP? */
 const int CONNECTED_BIT = BIT0;
 
+extern const char server_cert_pem_start[] asm("_binary_server_cert_pem_start");
+extern const char server_cert_pem_end[]   asm("_binary_server_cert_pem_end");
+
+
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
 {
@@ -129,6 +133,7 @@ static void hit_api(char* url)
     esp_http_client_config_t config = {
    .url = url,
    .event_handler = _http_event_handle,
+   .cert_pem = server_cert_pem_start,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_err_t err = esp_http_client_perform(client);
