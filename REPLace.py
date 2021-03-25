@@ -21,7 +21,7 @@
 
 # Now just set the port:
 
-port = '/dev/cu.usbserial-130'
+port = '/dev/cu.usbserial-1130'
 
 # Given a local folder using the variable file_system_dir,
 # this overwrites the folder content to the flash of the MicroPython instance.
@@ -110,7 +110,7 @@ class uploader:
         # port
         self.port = port
         if not self.port:
-            self.port = '/dev/cu.usbserial-130'
+            self.port = '/dev/cu.usbserial-1130'
 
         # local file system dir
         self.file_system_dir = file_system_dir
