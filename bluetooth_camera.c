@@ -25,9 +25,11 @@
 // static uint16_t connection_id = 0;
 // static uint16_t door_controller_attribute_handle = 0;
 
-static const char remote_device_name[] = "ESP_DOOR";
+static const char door_name[] = "ESP_DOOR";
+static const char sensor_name[] = "ESP_SENSOR";
 static bool connect    = false;
 static bool get_server = false;
+static int num_devices_found = 0;
 static esp_gattc_char_elem_t *char_elem_result   = NULL;
 static esp_gattc_descr_elem_t *descr_elem_result = NULL;
 
@@ -90,6 +92,16 @@ static struct gattc_profile_inst gl_profile_tab[PROFILE_NUM] = {
     },
 };
 
+struct device_info {
+	uint16_t gattc_if;
+	uint16_t char_handle;
+	uint16_t conn_id;
+	esp_bd_addr_t addr;
+};
+
+static struct device_info sensor_device;
+static struct device_info door_device;
+
 static bool uuid128_equal(uint8_t a[], uint8_t b[]){
 	bool uuid_match = true;
 	for(int i = 0; i < 16 && uuid_match; i++){
@@ -113,6 +125,14 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
 	   ESP_LOGI(GATTC_TAG, "ESP_GATTC_CONNECT_EVT conn_id %d, if %d", p_data->connect.conn_id, gattc_if);
 	   gl_profile_tab[DOOR_CONTROLLER_APP_IDX].conn_id = p_data->connect.conn_id;
 	   memcpy(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].remote_bda, p_data->connect.remote_bda, sizeof(esp_bd_addr_t));
+		 if(memcmp(door_device.addr, p_data->connect.remote_bda, sizeof(esp_bd_addr_t)) == 0){
+			 door_device.conn_id = p_data->connect.conn_id;
+			 door_device.gattc_if = gattc_if;
+		 }
+		 else if(memcmp(sensor_device.addr, p_data->connect.remote_bda, sizeof(esp_bd_addr_t)) == 0){
+			 sensor_device.conn_id = p_data->connect.conn_id;
+			 sensor_device.gattc_if = gattc_if;
+		 }
 	   ESP_LOGI(GATTC_TAG, "REMOTE BDA:");
 	   esp_log_buffer_hex(GATTC_TAG, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].remote_bda, sizeof(esp_bd_addr_t));
 	   esp_err_t mtu_ret = esp_ble_gattc_send_mtu_req (gattc_if, p_data->connect.conn_id);
@@ -201,6 +221,11 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
                     /*  Every service have only one char in our 'ESP_GATTS_DEMO' demo, so we used first 'char_elem_result' */
                     if (count > 0 && (char_elem_result[0].properties & ESP_GATT_CHAR_PROP_BIT_NOTIFY)){
                         gl_profile_tab[DOOR_CONTROLLER_APP_IDX].char_handle = char_elem_result[0].char_handle;
+												if(door_device.conn_id == p_data->search_cmpl.conn_id) {
+													door_device.char_handle = char_elem_result[0].char_handle;
+												} else if(sensor_device.conn_id == p_data->search_cmpl.conn_id) {
+													sensor_device.char_handle = char_elem_result[0].char_handle;
+												}
                         esp_ble_gattc_register_for_notify (gattc_if, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].remote_bda, char_elem_result[0].char_handle);
                     }
                 }
@@ -356,15 +381,26 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
             ESP_LOGI(GATTC_TAG, "\n");
 
             if (adv_name != NULL) {
-                if (strlen(remote_device_name) == adv_name_len && strncmp((char *)adv_name, remote_device_name, adv_name_len) == 0) {
-                    ESP_LOGI(GATTC_TAG, "searched device %s\n", remote_device_name);
-                    if (connect == false) {
-                        connect = true;
-                        ESP_LOGI(GATTC_TAG, "connect to the remote device.");
-                        esp_ble_gap_stop_scanning();
-                        esp_ble_gattc_open(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, scan_result->scan_rst.bda, scan_result->scan_rst.ble_addr_type, true);
-                    }
+								bool valid_device = false;
+                if (strlen(door_name) == adv_name_len && strncmp((char *)adv_name, door_name, adv_name_len) == 0) {
+                    ESP_LOGI(GATTC_TAG, "searched device %s\n", door_name);
+										valid_device = true;
+										num_devices_found++;
+										memcpy(door_device.addr, scan_result->scan_rst.bda, sizeof(esp_bd_addr_t));
                 }
+								else if (strlen(sensor_name) == adv_name_len && strncmp((char *)adv_name, sensor_name, adv_name_len) == 0) {
+									ESP_LOGI(GATTC_TAG, "searched device %s\n", sensor_name);
+									valid_device = true;
+									num_devices_found++;
+									memcpy(sensor_device.addr, scan_result->scan_rst.bda, sizeof(esp_bd_addr_t));
+								}
+								if(valid_device) {
+									ESP_LOGI(GATTC_TAG, "connect to the remote device.");
+									if(num_devices_found >= 2){
+										esp_ble_gap_stop_scanning();
+									}
+									esp_ble_gattc_open(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, scan_result->scan_rst.bda, scan_result->scan_rst.ble_addr_type, true);
+								}
             }
             break;
         case ESP_GAP_SEARCH_INQ_CMPL_EVT:
