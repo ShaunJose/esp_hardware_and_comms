@@ -196,6 +196,7 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 			conn_params.timeout = 400;    // timeout = 400*10ms = 4000ms
 			//start sent the update connection parameters to the peer device.
 			esp_ble_gap_update_conn_params(&conn_params);
+      esp_ble_gap_stop_advertising();
 			break;
 		case ESP_GATTS_WRITE_EVT:
       ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_WRITE_EVT reached %d\n", *(param->write.value));
