@@ -563,8 +563,8 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
 								if(valid_device) {
 									ESP_LOGI(GATTC_TAG, "connect to the remote device.");
 									if(door_device.device_found && sensor_device.device_found){
-										esp_ble_gattc_open(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].remote_bda, BLE_ADDR_TYPE_PUBLIC, true);
 										esp_ble_gap_stop_scanning();
+										esp_ble_gattc_open(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].remote_bda, BLE_ADDR_TYPE_PUBLIC, true);
 									}
 									// if(memcmp(door_device.addr, p_data->connect.remote_bda, sizeof(esp_bd_addr_t)) == 0)
 									// {
