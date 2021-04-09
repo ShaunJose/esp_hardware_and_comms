@@ -53,6 +53,8 @@
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
 
+#include "bluetooth_camera.h"
+
 // #include "esp_tls.h"
 #include "esp_crt_bundle.h"
 
@@ -79,6 +81,9 @@ static esp_netif_t *sta_netif = NULL;
 static const char *WIFI_TAG = "wifi";
 static const char *HTTP_TAG = "http";
 bool wifi_connected = false;
+
+//RESPONSE CODE
+uint8_t responseCode = -1;
 
 /* The event group allows multiple bits for each event,
    but we only care about one event - are we connected
@@ -153,7 +158,18 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
         case HTTP_EVENT_ON_DATA:
             ESP_LOGI(HTTP_TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
             if (!esp_http_client_is_chunked_response(evt->client)) {
-                ESP_LOGI(HTTP_TAG, "%.*s", evt->data_len, (char*)evt->data);
+              //set response code based on data received
+              char *response = (char*)evt->data;
+              char *notFound = "Face not";
+              char *noMask = "false";
+              char *mask = "true";
+              ESP_LOGI(HTTP_TAG, "HERE NOW: %s", response);
+              if(strstr(response, mask) != NULL)
+                responseCode = 5;
+              else if(strstr(response, noMask) != NULL)
+                responseCode = 6;
+              else if(strstr(response, notFound) != NULL)
+                responseCode = 7;
             }
             break;
         case HTTP_EVENT_ON_FINISH:
@@ -196,13 +212,14 @@ void wifi_app(unsigned char *image_ptr, int len)
 {
     ESP_ERROR_CHECK( nvs_flash_init() );
     initialise_wifi();
-    ESP_LOGI(HTTP_TAG, "Line 189");
     const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
     while(!wifi_connected)
     {
       vTaskDelay( xDelay );
     }
     hit_api("https://facemaskcheck.azurewebsites.net/api/Facemask", image_ptr, len);
+
+    app_camera_bt_main(responseCode);
 }
 
 mtmn_config_t init_config()

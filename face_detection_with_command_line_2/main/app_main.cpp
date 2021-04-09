@@ -30,15 +30,15 @@
  *      app_facenet.c/h
  */
 #include "sdkconfig.h"
-// #include "bluetooth_door.h"
-#include "bluetooth_camera.h"
+// #include "bluetooth_door.h
 #include "app_camera.h"
 #include "app_facenet.h"
+#include "bluetooth_camera.h"
 
 extern "C" void app_main()
 {
-    // app_camera_init();
-    // app_facenet_main();
+    app_camera_init();
+    app_facenet_main();
     // app_door_bt_main();
-    app_camera_bt_main();
+    // app_camera_bt_main();
 }

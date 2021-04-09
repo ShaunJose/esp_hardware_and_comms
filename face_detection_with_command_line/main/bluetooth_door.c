@@ -11,6 +11,8 @@
 #include "esp_bt.h"
 // #include "bta_api.h"
 
+#include "servo.h"
+
 #include "esp_gap_ble_api.h"
 #include "esp_gatts_api.h"
 #include "esp_bt_defs.h"
@@ -200,7 +202,12 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 			break;
 		case ESP_GATTS_WRITE_EVT:
       ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_WRITE_EVT reached %d\n", *(param->write.value));
+
 			// TODO: react to the camera telling us to open the door
+      if((*param->write.value) == 5)
+        app_servo_main();
+      else
+        ESP_LOGI(GATTS_TABLE_TAG, "%d is not the value im looking for!! ", *(param->write.value));
 			// if(connection_id == param->write.conn_id && param->write.handle == door_controller_attribute_handle){
       uint8_t temp_val = 5;
 			// esp_ble_gatts_set_attr_value(door_controller_attribute_handle, 1, &temp_val);

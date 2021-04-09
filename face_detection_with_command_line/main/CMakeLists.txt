@@ -3,6 +3,7 @@ set(COMPONENT_SRCS
     app_facenet.c
     app_camera.cpp
     bluetooth_door.c
+    servo.c
     )
 
 set(COMPONENT_ADD_INCLUDEDIRS
