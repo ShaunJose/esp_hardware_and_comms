@@ -36,6 +36,7 @@
 #include "bluetooth_door.h"
 // #include "app_camera.h"
 // #include "app_facenet.h"
+#include "servo.h"
 
 extern "C" void app_main()
 {
@@ -47,4 +48,5 @@ extern "C" void app_main()
     // app_led_main();
     app_door_bt_main();
     app_motion_sensor_main();
+    // app_servo_main();
 }
