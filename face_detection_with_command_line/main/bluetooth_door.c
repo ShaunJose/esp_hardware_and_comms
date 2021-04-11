@@ -12,6 +12,7 @@
 // #include "bta_api.h"
 
 #include "servo.h"
+#include "blink.h"
 
 #include "esp_gap_ble_api.h"
 #include "esp_gatts_api.h"
@@ -209,11 +210,13 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
       else if((*param->write.value) == 6)
       {
         //Flash red led for failure
+        app_led_main();
         ESP_LOGI(GATTS_TABLE_TAG, "No mask found. Val: %d ", *(param->write.value));
       }
       else if((*param->write.value) == 7)
       {
         //Flash red led for failure
+        app_led_main();
         ESP_LOGI(GATTS_TABLE_TAG, "No face found. Val: %d ", *(param->write.value));
       }
 			// if(connection_id == param->write.conn_id && param->write.handle == door_controller_attribute_handle){

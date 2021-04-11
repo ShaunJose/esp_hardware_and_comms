@@ -171,6 +171,7 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
               else if(strstr(response, notFound) != NULL)
                 responseCode = 7;
             }
+            send_message(responseCode);
             break;
         case HTTP_EVENT_ON_FINISH:
             ESP_LOGI(HTTP_TAG, "HTTP_EVENT_ON_FINISH");

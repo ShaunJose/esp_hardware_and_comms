@@ -10,6 +10,7 @@ extern "C" {
 #include "app_camera.h"
 
 void app_camera_bt_main();
+void send_message(uint8_t val);
 
 #if __cplusplus
 }

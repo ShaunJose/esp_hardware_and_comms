@@ -1207,6 +1207,12 @@ static void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp
     } while (0);
 }
 
+void send_message(uint8_t val)
+{
+	ESP_LOGI(GATTC_TAG, "Sending esp32 this value: %d", val);
+	esp_ble_gattc_write_char(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].conn_id, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].char_handle, 1, &val, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
+}
+
 void app_camera_bt_main()
 {
 
