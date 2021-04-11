@@ -206,17 +206,20 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 
 			// TODO: react to the camera telling us to open the door
       if((*param->write.value) == 5)
+      {
+        app_led_main(12);
         app_servo_main();
+      }
       else if((*param->write.value) == 6)
       {
         //Flash red led for failure
-        app_led_main();
+        app_led_main(33);
         ESP_LOGI(GATTS_TABLE_TAG, "No mask found. Val: %d ", *(param->write.value));
       }
       else if((*param->write.value) == 7)
       {
         //Flash red led for failure
-        app_led_main();
+        app_led_main(14);
         ESP_LOGI(GATTS_TABLE_TAG, "No face found. Val: %d ", *(param->write.value));
       }
 			// if(connection_id == param->write.conn_id && param->write.handle == door_controller_attribute_handle){

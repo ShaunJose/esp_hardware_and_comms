@@ -9,7 +9,7 @@ extern "C" {
 #include "image_util.h"
 #include "app_camera.h"
 
-void app_led_main();
+void app_led_main(int led_pin_num);
 
 #if __cplusplus
 }
