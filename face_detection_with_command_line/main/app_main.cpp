@@ -30,6 +30,8 @@
  *      app_facenet.c/h
  */
 #include "sdkconfig.h"
+#include "blink.h"
+#include "motion_sensor.h"
 // #include "bluetooth_camera.h"
 #include "bluetooth_door.h"
 // #include "app_camera.h"
@@ -39,7 +41,10 @@ extern "C" void app_main()
 {
     // app_camera_init();
     // app_facenet_main();
-    app_door_bt_main();
+    // app_door_bt_main();
     // app_camera_bt_main();
     // app_servo_main();
+    // app_led_main();
+    app_door_bt_main();
+    app_motion_sensor_main();
 }

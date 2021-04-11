@@ -219,7 +219,7 @@ void wifi_app(unsigned char *image_ptr, int len)
     }
     hit_api("https://facemaskcheck.azurewebsites.net/api/Facemask", image_ptr, len);
 
-    app_camera_bt_main(responseCode);
+    // app_camera_bt_main(responseCode);
 }
 
 mtmn_config_t init_config()

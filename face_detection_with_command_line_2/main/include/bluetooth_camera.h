@@ -9,7 +9,7 @@ extern "C" {
 #include "image_util.h"
 #include "app_camera.h"
 
-void app_camera_bt_main(uint8_t val);
+void app_camera_bt_main();
 
 #if __cplusplus
 }

@@ -9,8 +9,7 @@ extern "C" {
 #include "image_util.h"
 #include "app_camera.h"
 
-void app_door_bt_main();
-void send_message(uint8_t val);
+void app_motion_sensor_main();
 
 #if __cplusplus
 }

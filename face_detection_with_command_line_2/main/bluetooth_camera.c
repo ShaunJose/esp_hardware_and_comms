@@ -1043,6 +1043,7 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
 	 case ESP_GATTC_NOTIFY_EVT: //TAKE PIC HERE
     if (p_data->notify.is_notify){
         ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, receive notify value: %d", *(p_data->notify.value));
+				app_facenet_main();
     }else{
         ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, receive indicate value:");
     }
@@ -1206,7 +1207,7 @@ static void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp
     } while (0);
 }
 
-void app_camera_bt_main(uint8_t val)
+void app_camera_bt_main()
 {
 
     // Initialize NVS.
@@ -1273,9 +1274,9 @@ void app_camera_bt_main(uint8_t val)
     {
       vTaskDelay( xDelay );
     }
-		// send data to the ESPDoor
-		// uint8_t val = 3;
-		ESP_LOGI(GATTC_TAG, "I RECEIVED.... %d", val);
+
+		// send data to the ESPDoor to initiate connection
+		uint8_t val = 9;
 		esp_ble_gattc_write_char(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].conn_id, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].char_handle, 1, &val, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
 
 }

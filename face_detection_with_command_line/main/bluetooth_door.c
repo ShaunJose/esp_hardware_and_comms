@@ -73,9 +73,9 @@ struct gatts_profile_inst {
 uint16_t door_controller_handle_table[DCS_IDX_NB];
 
 //GLOBALS for comms
-uint16_t conn_id_global;
-uint16_t handle_global;
-esp_gatt_if_t gatts_if_global;
+static uint16_t conn_id_global;
+static uint16_t handle_global;
+static esp_gatt_if_t gatts_if_global;
 
 static void gatts_profile_event_handler(esp_gatts_cb_event_t event,
 					esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
@@ -206,12 +206,20 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 			// TODO: react to the camera telling us to open the door
       if((*param->write.value) == 5)
         app_servo_main();
-      else
-        ESP_LOGI(GATTS_TABLE_TAG, "%d is not the value im looking for!! ", *(param->write.value));
+      else if((*param->write.value) == 6)
+      {
+        //Flash red led for failure
+        ESP_LOGI(GATTS_TABLE_TAG, "No mask found. Val: %d ", *(param->write.value));
+      }
+      else if((*param->write.value) == 7)
+      {
+        //Flash red led for failure
+        ESP_LOGI(GATTS_TABLE_TAG, "No face found. Val: %d ", *(param->write.value));
+      }
 			// if(connection_id == param->write.conn_id && param->write.handle == door_controller_attribute_handle){
-      uint8_t temp_val = 5;
+      // uint8_t temp_val = 5;
 			// esp_ble_gatts_set_attr_value(door_controller_attribute_handle, 1, &temp_val);
-      esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, param->write.handle, 1, &temp_val, false);
+      // esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, param->write.handle, 1, &temp_val, false);
       gatts_if_global = gatts_if;
       conn_id_global = param->write.conn_id;
       handle_global = param->write.handle;
@@ -292,6 +300,12 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     } while (0);
 }
 
+void send_message(uint8_t val)
+{
+  ESP_LOGI(GATTS_TABLE_TAG, "sending %d to camera", val);
+  esp_ble_gatts_send_indicate(gatts_if_global, conn_id_global, handle_global, 1, &val, false);
+}
+
 void app_door_bt_main(){
 	/* in order to update the characteristic value, which is the data that both devices read, call
 	 esp_ble_gatts_set_attr_value(door_controller_attribute_handle, uint16_t length, const uint8_t *value)*/
@@ -335,11 +349,11 @@ void app_door_bt_main(){
     esp_ble_gap_register_callback(gap_event_handler);
     esp_ble_gatts_app_register(DOOR_CONTROLLER_APP_ID);
 
-    const TickType_t xDelay = 30000 / portTICK_PERIOD_MS;
-    vTaskDelay( xDelay );
-    uint8_t temp_val = 17;
-    ESP_LOGI(GATTS_TABLE_TAG, "DELAY DONE");
-    esp_ble_gatts_send_indicate(gatts_if_global, conn_id_global, handle_global, 1, &temp_val, false);
+    // const TickType_t xDelay = 30000 / portTICK_PERIOD_MS;
+    // vTaskDelay( xDelay );
+    // uint8_t temp_val = 9;
+    // ESP_LOGI(GATTS_TABLE_TAG, "DELAY DONE");
+    // esp_ble_gatts_send_indicate(gatts_if_global, conn_id_global, handle_global, 1, &temp_val, false);
 
     return;
 

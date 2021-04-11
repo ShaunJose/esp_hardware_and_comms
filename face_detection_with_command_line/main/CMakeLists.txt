@@ -4,6 +4,8 @@ set(COMPONENT_SRCS
     app_camera.cpp
     bluetooth_door.c
     servo.c
+    blink.c
+    motion_sensor.c
     )
 
 set(COMPONENT_ADD_INCLUDEDIRS
