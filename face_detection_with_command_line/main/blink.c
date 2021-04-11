@@ -43,11 +43,11 @@ static uint8_t s_led_state = 0;
 
 // #elif CONFIG_BLINK_LED_GPIO
 
-static void blink_led(int pin_num)
-{
-    /* Set the GPIO level according to the state (LOW or HIGH)*/
-    gpio_set_level(pin_num, s_led_state);
-}
+// static void blink_led(int pin_num)
+// {
+//     /* Set the GPIO level according to the state (LOW or HIGH)*/
+//     gpio_set_level(pin_num, s_led_state);
+// }
 
 static void configure_led(int pin_num)
 {
@@ -65,11 +65,22 @@ void app_led_main(int led_pin_num)
     /* Configure the peripheral according to the LED type */
     configure_led(led_pin_num);
 
-    while (1) {
-        ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
-        blink_led(led_pin_num);
-        /* Toggle the LED state */
-        s_led_state = !s_led_state;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-    }
+    gpio_set_level(led_pin_num, 1);
+
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+    gpio_set_level(led_pin_num, 0);
+
+    // int number_of_blinks = 0;
+    //
+    // while (number_of_blinks <= 5) {
+    //     ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
+    //     blink_led(led_pin_num);
+    //     /* Toggle the LED state */
+    //     s_led_state = !s_led_state;
+    //     vTaskDelay(500 / portTICK_PERIOD_MS);
+    //     number_of_blinks++;
+    // }
+    //
+    // gpio_set_level(led_pin_num, s_led_state);
 }
