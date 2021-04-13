@@ -34,6 +34,7 @@
 #include "motion_sensor.h"
 // #include "bluetooth_camera.h"
 #include "bluetooth_door.h"
+#include "thermal_sensor.h"
 // #include "app_camera.h"
 // #include "app_facenet.h"
 #include "servo.h"
@@ -46,7 +47,8 @@ extern "C" void app_main()
     // app_camera_bt_main();
     // app_servo_main();
     // app_led_main();
-    app_door_bt_main();
-    app_motion_sensor_main();
-    // app_servo_main();
+    // app_door_bt_main(); //THIS
+    // app_motion_sensor_main(); //THIS
+    // app_thermal_sensor_main();
+    app_servo_main();
 }
