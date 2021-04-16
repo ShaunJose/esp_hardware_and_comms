@@ -1,11 +1,11 @@
-# esp_hardware_and_comms for a Face Mask Verifier   
+# Hardware and Comms for a Face Mask Verifier   
 
 ## README sections  
 
 * [Overiew](#overview)
 * [Setting up prerequisites](#setting-up-the-prerequisites)
 * [Build and Run](#build-and-run)
-* [Project explanation](#project-explanation) : Explanation of the embedded systems, communication using BLE and wifi, and the code
+* [Project explanation](#project-explanation): Explanation of the code for the embedded systems, and communication using BLE and wifi
 
 ## Overview  
 
