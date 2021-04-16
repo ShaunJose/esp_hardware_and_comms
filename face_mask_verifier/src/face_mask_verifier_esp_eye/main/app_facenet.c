@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "esp_log.h"
@@ -6,9 +7,6 @@
 #include "freertos/task.h"
 #include "app_facenet.h"
 #include "sdkconfig.h"
-
-#include <string.h>
-#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -19,16 +17,15 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "esp_http_client.h"
-
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
+#include "esp_crt_bundle.h"
 
 #include "bluetooth_camera.h"
 
-#include "esp_crt_bundle.h"
 
 // set these values by updating Example Configuration after running idf.py menuconfig
 #define EXAMPLE_WIFI_SSID CONFIG_EXAMPLE_WIFI_SSID
@@ -48,7 +45,7 @@ static const char *WIFI_TAG = "wifi";
 static const char *HTTP_TAG = "http";
 bool wifi_connected = false;
 
-// response code to symbolise what i get from the API
+// response code to symbolise what we get from the API
 uint8_t responseCode = -1;
 
 /* The event group allows multiple bits for each event,
@@ -56,9 +53,10 @@ uint8_t responseCode = -1;
    to the AP with an IP? */
 const int CONNECTED_BIT = BIT0;
 
-
+// Tag for the logging from this file
 static const char *TAG = "app_process";
 
+// Event handler for connecting to the Wifi
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
 {
@@ -73,6 +71,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
 }
 
+// Initialize Wifi
 static void initialise_wifi(void)
 {
    ESP_ERROR_CHECK(esp_netif_init());
@@ -99,6 +98,7 @@ static void initialise_wifi(void)
    ESP_LOGI(HTTP_TAG, "Wifi established");
 }
 
+// The event handler for communication over https
 esp_err_t _http_event_handle(esp_http_client_event_t *evt)
 {
     switch(evt->event_id) {
@@ -120,10 +120,9 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
             if (!esp_http_client_is_chunked_response(evt->client)) {
               //set response code based on data received
               char *response = (char*)evt->data;
-              char *notFound = "Face not";
-              char *noMask = "false";
-              char *mask = "true";
-              ESP_LOGI(HTTP_TAG, "HERE NOW: %s", response);
+              char *notFound = "Face not"; //face no found
+              char *noMask = "false"; // no face mask on face
+              char *mask = "true"; // face mask worn properly :)
               if(strstr(response, mask) != NULL)
                 responseCode = 5;
               else if(strstr(response, noMask) != NULL)
@@ -131,6 +130,8 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
               else if(strstr(response, notFound) != NULL)
                 responseCode = 7;
             }
+            // Send a message to the esp32 over bluetooth
+            // (This function is in bluetooth_camera.c)
             send_message(responseCode);
             break;
         case HTTP_EVENT_ON_FINISH:
@@ -143,7 +144,8 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
     return ESP_OK;
 }
 
-static void hit_api(char* url, unsigned char *data_ptr, int len)
+// Function to send the image to the api
+static void post_to_api(char* url, unsigned char *data_ptr, int len)
 {
 
     ESP_LOGI(HTTP_TAG, "Starting api call");
@@ -166,16 +168,19 @@ static void hit_api(char* url, unsigned char *data_ptr, int len)
     esp_http_client_cleanup(client);
 }
 
+// Setup wiif and call post api when wifi is connected
 void wifi_app(unsigned char *image_ptr, int len)
 {
     ESP_ERROR_CHECK( nvs_flash_init() );
     initialise_wifi();
     const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
+    //wait for wifi connection to be established properly
     while(!wifi_connected)
     {
       vTaskDelay( xDelay );
     }
-    hit_api("https://facemaskcheck.azurewebsites.net/api/Facemask", image_ptr, len);
+    // Post the image received to the api :)
+    post_to_api("https://facemaskcheck.azurewebsites.net/api/Facemask", image_ptr, len);
 
 }
 
@@ -201,8 +206,8 @@ mtmn_config_t init_config()
 
 void error(const char *msg) { perror(msg); exit(0); }
 
-
-void task_process (void *arg)
+// Take a picture using the esp-eye
+void take_pic (void *arg)
 {
     size_t frame_num = 0;
     dl_matrix3du_t *image_matrix = NULL;
@@ -247,15 +252,18 @@ void task_process (void *arg)
         dl_lib_free(net_boxes);
     }
 
-    ESP_LOGI(TAG, "Sending image to api function");
+    /* 6. Send image to the wifi connect function */
+    ESP_LOGI(TAG, "Sending image to wifi app function");
     wifi_app(fb->buf, fb->len);
 
+    /* 7. Free up image matrix space :) */
     dl_matrix3du_free(image_matrix);
 
 
 }
 
+// file's main func. Call take pic
 void app_facenet_main()
 {
-    xTaskCreatePinnedToCore(task_process, "process", 4 * 1024, NULL, 5, NULL, 1);
+    xTaskCreatePinnedToCore(take_pic, "process", 4 * 1024, NULL, 5, NULL, 1);
 }

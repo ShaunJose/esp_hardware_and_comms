@@ -1,3 +1,5 @@
+// Source: official esp-who repository: https://github.com/espressif/esp-who
+
 #include "app_camera.h"
 
 static const char *TAG = "app_camera";
@@ -5,7 +7,7 @@ static const char *TAG = "app_camera";
 void app_camera_init()
 {
 #if CONFIG_CAMERA_MODEL_ESP_EYE
-    
+
     gpio_config_t conf;
     conf.mode = GPIO_MODE_INPUT;
     conf.pull_up_en = GPIO_PULLUP_ENABLE;
@@ -41,7 +43,7 @@ void app_camera_init()
     config.jpeg_quality = 10;
     config.fb_count = 1;
 
-    // camera init
+    // Initialize Camera
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Camera init failed with error 0x%x", err);

@@ -6,7 +6,6 @@
 #include "nvs_flash.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
 #include "esp_bt.h"
 #include "esp_gap_ble_api.h"
 #include "esp_gattc_api.h"
@@ -95,6 +94,7 @@ static bool uuid128_equal(uint8_t a[], uint8_t b[]){
 	return uuid_match;
 }
 
+// The event handler for gattc profile
 static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp_ble_gattc_cb_param_t *param){
 	esp_ble_gattc_cb_param_t *p_data = (esp_ble_gattc_cb_param_t *)param;
 
@@ -265,10 +265,11 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
          }
          break;
      }
-	 case ESP_GATTC_NOTIFY_EVT:
+	 case ESP_GATTC_NOTIFY_EVT: // if the esp32 contacts us...
+	 // Trigger the camera to take a picture!
     if (p_data->notify.is_notify){
         ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, receive notify value: %d", *(p_data->notify.value));
-				app_facenet_main(); //TAKE PICTURE
+				app_facenet_main();
     }else{
         ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, receive indicate value:");
     }
@@ -318,6 +319,7 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
     }
 }
 
+// Function to scan for devices in search of the esp32
 static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param)
 {
     uint8_t *adv_name = NULL;
@@ -399,6 +401,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
     }
 }
 
+// Setup registering profile
 static void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp_ble_gattc_cb_param_t *param)
 {
     /* If event is register event, store the gattc_if for each profile */
@@ -428,12 +431,15 @@ static void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp
     } while (0);
 }
 
+// Receive a value from the camera and send it to the esp32 over Bluetooth
+// (This is called by the camera app app_facenet.c)
 void send_message(uint8_t val)
 {
 	ESP_LOGI(GATTC_TAG, "Sending esp32 this value: %d", val);
 	esp_ble_gattc_write_char(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].conn_id, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].char_handle, 1, &val, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
 }
 
+// Main funct of file to setup bluetooth comms by calling functions in order
 void app_camera_bt_main()
 {
 
@@ -502,8 +508,8 @@ void app_camera_bt_main()
       vTaskDelay( xDelay );
     }
 
-		// send data to the ESPDoor to initiate connection
-		uint8_t val = 9;
+		// send data to the ESPDoor to initiate connection :)
+		uint8_t val = 9; // can be any value, just sending something to setup the communication with the esp32
 		esp_ble_gattc_write_char(gl_profile_tab[DOOR_CONTROLLER_APP_IDX].gattc_if, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].conn_id, gl_profile_tab[DOOR_CONTROLLER_APP_IDX].char_handle, 1, &val, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
 
 }

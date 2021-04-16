@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -9,15 +8,14 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_bt.h"
-
-#include "servo.h"
-#include "blink.h"
-
 #include "esp_gap_ble_api.h"
 #include "esp_gatts_api.h"
 #include "esp_bt_defs.h"
 #include "esp_bt_main.h"
 #include "esp_bt_main.h"
+
+#include "servo.h"
+#include "blink.h"
 
 enum {
   DCS_IDX_SVC,      // Door Controller Service index
@@ -141,6 +139,7 @@ static const esp_gatts_attr_db_t door_controller_gatt_db[DCS_IDX_NB] =
       sizeof(uint16_t),sizeof(door_controller_ccc), (uint8_t *)door_controller_ccc}},
 };
 
+// The event handler for gattc profile events
 static void gatts_profile_event_handler(esp_gatts_cb_event_t event,
 esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 {
@@ -197,19 +196,19 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
       ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_WRITE_EVT reached %d\n", *(param->write.value));
 
 			// React to the camera telling us to open the door
-      if((*param->write.value) == 5)
+      if((*param->write.value) == 5) // Value for face mask worn properly
       {
-        app_led_main(12);
-        app_servo_main();
+        app_led_main(12); // Green led
+        app_servo_main(); // Trigger servo motor to open the door
       }
-      else if((*param->write.value) == 6)
+      else if((*param->write.value) == 6) // Value for no face mask worn
       {
-        app_led_main(33);
+        app_led_main(33); // Red led
         ESP_LOGI(GATTS_TABLE_TAG, "No mask found. Val: %d ", *(param->write.value));
       }
-      else if((*param->write.value) == 7)
+      else if((*param->write.value) == 7) // Value for face not found
       {
-        app_led_main(14);
+        app_led_main(14); // Yellow led
         ESP_LOGI(GATTS_TABLE_TAG, "No face found. Val: %d ", *(param->write.value));
       }
 
@@ -244,6 +243,8 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 	}
 }
 
+
+// The event handler for gap
 static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param)
 {
     ESP_LOGE(GATTS_TABLE_TAG, "GAP_EVT, event %d\n", event);
@@ -263,6 +264,7 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
     }
 }
 
+// The event handler for gattc
 static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 {
     ESP_LOGI(GATTS_TABLE_TAG, "EVT %d, gatts if %d\n", event, gatts_if);
@@ -292,12 +294,15 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     } while (0);
 }
 
+// Send value received to the esp-eye.. called when motion sensor senses movement
+// (This is called by motion_sensor.c)
 void send_message(uint8_t val)
 {
   ESP_LOGI(GATTS_TABLE_TAG, "sending %d to camera", val);
   esp_ble_gatts_send_indicate(gatts_if_global, conn_id_global, handle_global, 1, &val, false);
 }
 
+// Main function to establish bluetooth connection with the esp-eye by calling the relevant functions in order
 void app_door_bt_main(){
 	/* in order to update the characteristic value, which is the data that both devices read, call
 	 esp_ble_gatts_set_attr_value(door_controller_attribute_handle, uint16_t length, const uint8_t *value)*/
