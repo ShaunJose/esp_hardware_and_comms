@@ -55,7 +55,9 @@ idf.py -p /dev/cu.usbserial-1110 flash monitor
 cd face_mask_verifier/src/face_mask_verifier_esp_eye
 ```
 
-7. Follow steps 2 to 6 in this folder
+7. Change the ssid and password to your wifi's details in the file `main/app_facenet.c`
+
+8. Repeat steps 2 to 6
 
 ## Project explanation  
 
