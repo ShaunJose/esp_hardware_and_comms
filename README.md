@@ -9,7 +9,7 @@
 
 ## Overview  
 
-This repository contains the code for the face Mask Verifier. It works together with the API and image processing app in (this repository)[https://github.com/pkjennings999/CS7NS2-API/tree/main/CS7NS2-API]
+This repository contains the code for the face Mask Verifier. It works together with the API and image processing app in [this repository](https://github.com/pkjennings999/CS7NS2-API/tree/main/CS7NS2-API)
 
 `face_mask_verifier/src/face_mask_verifier_esp32` contains the code to be run and flashed onto the esp32.   
 
@@ -20,7 +20,7 @@ These two run together and communicate via bluetooth as explained at the end of 
 ## Setting up prerequisites  
 
 To build this project, you first need to setup esp-idf.  
-Please refer to the (official site)[https://docs.espressif.com/projects/esp-idf/en/v4.0/get-started/index.html] by Espressif for this setup.
+Please refer to the [official site](https://docs.espressif.com/projects/esp-idf/en/v4.0/get-started/index.html) by Espressif for this setup.
 
 ## Build and Run
 
