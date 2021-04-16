@@ -29,7 +29,7 @@ Please refer to the [official site](https://docs.espressif.com/projects/esp-idf/
 cd face_mask_verifier/src/face_mask_verifier_esp32
 ```
 
-2. Run the `export.sh` code as explained in the getting start link by Espressif above   
+2. Run the `export.sh` code as explained in the getting started link by Espressif above   
 For example:
 ```
 . ~/esp/esp-idf/export.sh
@@ -45,7 +45,7 @@ idf.py fullclean
 idf.py build
 ```
 
-5. Flash it onto the device using the relevant port. In this case the port is /dev/cu.usbserial-1110
+5. Flash it onto the device using the relevant port. In this case the port is `/dev/cu.usbserial-1110`
 ```
 idf.py -p /dev/cu.usbserial-1110 flash monitor
 ```
