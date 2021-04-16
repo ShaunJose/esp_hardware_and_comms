@@ -1,6 +1,3 @@
-// #ifndef _APP_FACENET_H_
-// #define _APP_FACENET_H_
-
 #if __cplusplus
 extern "C" {
 #endif
@@ -13,4 +10,3 @@ void app_servo_main();
 #if __cplusplus
 }
 #endif
-// #endif

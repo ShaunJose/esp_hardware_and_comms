@@ -81,8 +81,7 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event,
 static const uint16_t primary_service_uuid         = ESP_GATT_UUID_PRI_SERVICE;
 static const uint16_t character_declaration_uuid   = ESP_GATT_UUID_CHAR_DECLARE;
 static const uint16_t character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
-// static const uint8_t char_prop_read                =  ESP_GATT_CHAR_PROP_BIT_READ;
-// static const uint8_t char_prop_write               = ESP_GATT_CHAR_PROP_BIT_WRITE;
+
 static const uint8_t char_prop_read_write_notify   = ESP_GATT_CHAR_PROP_BIT_WRITE | ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t door_controller_ccc[2]      = {0x00, 0x00};
 
@@ -174,9 +173,7 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
         	break;
 		case ESP_GATTS_READ_EVT:
 			ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_READ_EVT");
-			// TODO: insert code
 			break;
-		// TODO: connect event, disconnect event, write event
 		case ESP_GATTS_DISCONNECT_EVT:
 			connected = false;
 			ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_DISCONNECT_EVT, reason = 0x%x", param->disconnect.reason);
@@ -189,19 +186,17 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 			esp_log_buffer_hex(GATTS_TABLE_TAG, param->connect.remote_bda, 6);
 			esp_ble_conn_update_params_t conn_params = {0};
 			memcpy(conn_params.bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
-			/* For the iOS system, please refer to Apple official documents about the BLE connection parameters restrictions. */
 			conn_params.latency = 0;
 			conn_params.max_int = 0x20;    // max_int = 0x20*1.25ms = 40ms
 			conn_params.min_int = 0x10;    // min_int = 0x10*1.25ms = 20ms
 			conn_params.timeout = 400;    // timeout = 400*10ms = 4000ms
-			//start sent the update connection parameters to the peer device.
 			esp_ble_gap_update_conn_params(&conn_params);
       esp_ble_gap_stop_advertising();
 			break;
 		case ESP_GATTS_WRITE_EVT:
       ESP_LOGI(GATTS_TABLE_TAG, "ESP_GATTS_WRITE_EVT reached %d\n", *(param->write.value));
 
-			// TODO: react to the camera telling us to open the door
+			// React to the camera telling us to open the door
       if((*param->write.value) == 5)
       {
         app_led_main(12);
@@ -209,24 +204,18 @@ esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
       }
       else if((*param->write.value) == 6)
       {
-        //Flash red led for failure
         app_led_main(33);
         ESP_LOGI(GATTS_TABLE_TAG, "No mask found. Val: %d ", *(param->write.value));
       }
       else if((*param->write.value) == 7)
       {
-        //Flash red led for failure
         app_led_main(14);
         ESP_LOGI(GATTS_TABLE_TAG, "No face found. Val: %d ", *(param->write.value));
       }
-			// if(connection_id == param->write.conn_id && param->write.handle == door_controller_attribute_handle){
-      // uint8_t temp_val = 5;
-			// esp_ble_gatts_set_attr_value(door_controller_attribute_handle, 1, &temp_val);
-      // esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, param->write.handle, 1, &temp_val, false);
+
       gatts_if_global = gatts_if;
       conn_id_global = param->write.conn_id;
       handle_global = param->write.handle;
-			// }
 			break;
 		case ESP_GATTS_ADD_CHAR_EVT:
 			ESP_LOGI(GATTS_TABLE_TAG, "ADD_CHAR_EVT, status %d,  attr_handle %d, service_handle %d\n",

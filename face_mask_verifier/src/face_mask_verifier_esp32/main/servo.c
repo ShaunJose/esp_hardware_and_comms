@@ -7,7 +7,6 @@
 #include "driver/mcpwm.h"
 #include "soc/mcpwm_periph.h"
 
-//You can get these value from the datasheet of servo you use, in general pulse width varies between 1000 to 2000 mocrosecond
 #define SERVO_MIN_PULSEWIDTH 1000 //Minimum pulse width in microsecond
 #define SERVO_MAX_PULSEWIDTH 2000 //Maximum pulse width in microsecond
 #define SERVO_MAX_DEGREE 20 //Maximum angle in degree upto which servo can rotate
@@ -36,7 +35,7 @@ static uint32_t servo_per_degree_init(uint32_t degree_of_rotation)
 /**
  * @brief Configure MCPWM module
  */
-void mcpwm_example_servo_control(void *arg)
+void mcpwm_example_servo_control()
 {
     //1. mcpwm gpio initialization
     mcpwm_example_gpio_initialize();
@@ -66,7 +65,6 @@ void mcpwm_example_servo_control(void *arg)
 
 void app_servo_main(void)
 {
-    printf("Servo motor operating\n");
-    mcpwm_example_servo_control("servo motor function");
+    mcpwm_example_servo_control();
     return;
 }

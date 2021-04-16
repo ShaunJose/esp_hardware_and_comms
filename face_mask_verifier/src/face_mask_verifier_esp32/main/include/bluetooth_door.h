@@ -1,6 +1,3 @@
-// #ifndef _APP_FACENET_H_
-// #define _APP_FACENET_H_
-
 #if __cplusplus
 extern "C" {
 #endif
@@ -14,4 +11,3 @@ void send_message(uint8_t val);
 #if __cplusplus
 }
 #endif
-// #endif
