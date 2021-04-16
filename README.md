@@ -2,10 +2,10 @@
 
 ## README sections  
 
-* (Overiew)[#overview]
-* (Setting up prerequisites)[#setting-up-the-prerequisites]
-* (Build and Run)[#build-and-run]
-* (Project explanation)(#project-explanation) : Explanation of the embedded systems, communication using BLE and wifi, and the code
+* [Overiew](#overview)
+* [Setting up prerequisites](#setting-up-the-prerequisites)
+* [Build and Run](#build-and-run)
+* [Project explanation](#project-explanation) : Explanation of the embedded systems, communication using BLE and wifi, and the code
 
 ## Overview  
 
