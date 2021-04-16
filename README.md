@@ -9,7 +9,7 @@
 
 ## Overview  
 
-This repository contains the code for the face Mask Verifier. It works together with the API and image processing app in [this repository](https://github.com/pkjennings999/CS7NS2-API/tree/main/CS7NS2-API)
+This repository contains the code for the face Mask Verifier. It works together with the API and image processing app in [this repository](https://github.com/pkjennings999/CS7NS2-API)
 
 `face_mask_verifier/src/face_mask_verifier_esp32` contains the code to be run and flashed onto the esp32.   
 
